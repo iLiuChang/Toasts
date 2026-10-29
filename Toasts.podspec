@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Toasts"
-  s.version      = "3.0.0"
+  s.version      = "3.1.0"
   s.summary      = "Simple swift toast notifications"
   s.homepage     = "https://github.com/iLiuChang/Toasts"
   s.license      = "MIT"
