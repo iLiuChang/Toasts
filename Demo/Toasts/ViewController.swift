@@ -34,12 +34,12 @@ final class ViewController: UIViewController {
                 self?.view.showToast("保存成功")
             },
             Example(title: "顶部 (Top)") { [weak self] in
-                let configuration = ToastConfiguration()
+                var configuration = ToastConfiguration()
                 configuration.position = .top
                 self?.view.showToast("顶部提示", configuration: configuration)
             },
             Example(title: "底部 (Bottom)") { [weak self] in
-                let configuration = ToastConfiguration()
+                var configuration = ToastConfiguration()
                 configuration.position = .bottom
                 self?.view.showToast("底部提示", configuration: configuration)
             },
@@ -54,7 +54,7 @@ final class ViewController: UIViewController {
         ]),
         ExampleSection(title: "样式与行为 (Style & Behavior)", examples: [
             Example(title: "自定义样式 (Custom Style)") { [weak self] in
-                let configuration = ToastConfiguration()
+                var configuration = ToastConfiguration()
                 configuration.visibleDuration = 2
                 configuration.style.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.92)
                 configuration.style.messageColor = .white
@@ -73,7 +73,7 @@ final class ViewController: UIViewController {
                 }
             },
             Example(title: "队列弹出 3 条 (Queue 3 Toasts)") { [weak self] in
-                let configuration = ToastConfiguration()
+                var configuration = ToastConfiguration()
                 configuration.isQueueEnabled = true
                 configuration.visibleDuration = 1.2
                 self?.view.showToast("第一条", configuration: configuration)
@@ -86,7 +86,7 @@ final class ViewController: UIViewController {
                 self?.view.showActivityToast()
             },
             Example(title: "底部 Activity (Bottom)") { [weak self] in
-                let configuration = ToastConfiguration()
+                var configuration = ToastConfiguration()
                 configuration.position = .bottom
                 self?.view.showActivityToast(configuration: configuration)
             },

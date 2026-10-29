@@ -95,10 +95,10 @@ public struct ToastStyle {
 /// Shared behavior settings for toast notifications.
 ///
 /// Pass an instance to `showToast` or `showActivityToast`. When omitted, ``default`` is used.
-public class ToastConfiguration {
+public struct ToastConfiguration {
     
     /// The configuration used when a show method does not receive an explicit configuration.
-    public static let `default` = ToastConfiguration()
+    @MainActor public static var `default` = ToastConfiguration()
     
     public init() {}
     

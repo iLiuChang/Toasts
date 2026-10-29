@@ -88,7 +88,7 @@ Position comes from `ToastConfiguration`. Change the default, or pass a configur
 ```swift
 ToastConfiguration.default.position = .top
 
-let configuration = ToastConfiguration()
+var configuration = ToastConfiguration()
 configuration.position = .center
 view.showToast("Centered toast", configuration: configuration)
 ```
@@ -102,7 +102,7 @@ view.showToast("Pinned here", at: CGPoint(x: view.bounds.midX, y: 180))
 ### Custom Appearance
 
 ```swift
-let configuration = ToastConfiguration()
+var configuration = ToastConfiguration()
 configuration.visibleDuration = 2
 configuration.style.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.92)
 configuration.style.messageColor = .white
@@ -126,7 +126,7 @@ view.showToast("Tap to dismiss") { fromTap in
 ### Queue
 
 ```swift
-let configuration = ToastConfiguration()
+var configuration = ToastConfiguration()
 configuration.isQueueEnabled = true
 configuration.visibleDuration = 1.2
 
