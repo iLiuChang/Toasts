@@ -165,8 +165,8 @@ view.clearToastQueue()
 | `hideToast()` | Hides the oldest visible toast. Does not hide the activity toast. |
 | `hideAllToasts(includeActivity:clearQueue:)` | Hides all visible toasts. Both flags default to `true`. |
 | `clearToastQueue()` | Clears queued toasts without hiding any that are currently visible. |
-| `showActivityToast(configuration:)` | Shows an activity toast using the configuration's position. |
-| `showActivityToast(at:configuration:)` | Shows an activity toast at a specific center point. |
+| `showActivityToast(configuration:completion:)` | Shows an activity toast using the configuration's position. |
+| `showActivityToast(at:configuration:completion:)` | Shows an activity toast at a specific center point. |
 | `hideActivityToast()` | Hides the visible activity toast, if there is one. |
 | `isShowingToast` | Whether a toast or activity toast is currently visible. |
 
@@ -176,7 +176,7 @@ view.clearToastQueue()
 |---|---|
 | `default` | Used when no configuration is passed. |
 | `style` | Visual style for toast and activity views. |
-| `isTapToDismissEnabled` | Whether tapping a toast dismisses it. Default is `true`. |
+| `isTapToDismissEnabled` | Whether tapping a toast or activity toast dismisses it. Default is `true`. |
 | `isQueueEnabled` | Whether toasts wait in a queue. Default is `false`. Does not affect activity toasts. |
 | `visibleDuration` | Visible duration in seconds. Default is `3`. |
 | `fadeDuration` | Fade in and fade out duration in seconds. Default is `0.2`. |

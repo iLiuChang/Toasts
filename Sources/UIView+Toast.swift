@@ -92,10 +92,12 @@ public extension UIView {
     /// ``hideActivityToast()`` is called. Activity toasts are independent of regular toasts and
     /// are not affected by queueing.
     ///
-    /// - Parameter configuration: Behavior and style settings. Uses ``ToastConfiguration/default`` when `nil`.
-    func showActivityToast(configuration: ToastConfiguration? = nil) {
+    /// - Parameters:
+    ///   - configuration: Behavior and style settings. Uses ``ToastConfiguration/default`` when `nil`.
+    ///   - completion: Called after the activity toast disappears. `fromTap` is `true` if the user tapped to dismiss.
+    func showActivityToast(configuration: ToastConfiguration? = nil, completion: ((_ fromTap: Bool) -> Void)? = nil) {
         let configuration = configuration ?? .default
-        let toast = makeActivityToastView(configuration: configuration)
+        let toast = makeActivityToastView(configuration: configuration, completion: completion)
         let point = configuration.position.centerPoint(for: toast, in: self, style: configuration.style)
         showActivityToast(toast, at: point)
     }
@@ -109,20 +111,15 @@ public extension UIView {
     /// - Parameters:
     ///   - point: The center point of the activity toast in the receiver's coordinate space.
     ///   - configuration: Behavior and style settings. Uses ``ToastConfiguration/default`` when `nil`.
-    func showActivityToast(at point: CGPoint, configuration: ToastConfiguration? = nil) {
+    ///   - completion: Called after the activity toast disappears. `fromTap` is `true` if the user tapped to dismiss.
+    func showActivityToast(at point: CGPoint, configuration: ToastConfiguration? = nil, completion: ((_ fromTap: Bool) -> Void)? = nil) {
         let configuration = configuration ?? .default
-        showActivityToast(makeActivityToastView(configuration: configuration), at: point)
+        showActivityToast(makeActivityToastView(configuration: configuration, completion: completion), at: point)
     }
     
     /// Hides the visible activity toast, if there is one.
     func hideActivityToast() {
-        guard let toast = objc_getAssociatedObject(self, &activityToastViewKey) as? ActivityToastView else { return }
-        UIView.animate(withDuration: toast.configuration.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
-            toast.alpha = 0.0
-        }) { _ in
-            toast.removeFromSuperview()
-            objc_setAssociatedObject(self, &activityToastViewKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
+        hideActivityToast(fromTap: false)
     }
     
     // MARK: - Status
@@ -223,17 +220,42 @@ private extension UIView {
         
         toast.alpha = 0.0
         toast.center = point
+        
+        if toast.configuration.isTapToDismissEnabled {
+            let recognizer = UITapGestureRecognizer(target: self, action: #selector(UIView.handleActivityToastTapped(_:)))
+            toast.addGestureRecognizer(recognizer)
+            toast.isUserInteractionEnabled = true
+            toast.isExclusiveTouch = true
+        }
+        
         objc_setAssociatedObject(self, &activityToastViewKey, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         addSubview(toast)
         
-        UIView.animate(withDuration: toast.configuration.fadeDuration, delay: 0.0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: toast.configuration.fadeDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: {
             toast.alpha = 1.0
         })
     }
     
-    func makeActivityToastView(configuration: ToastConfiguration) -> ActivityToastView {
+    @objc
+    func handleActivityToastTapped(_ recognizer: UITapGestureRecognizer) {
+        hideActivityToast(fromTap: true)
+    }
+    
+    func hideActivityToast(fromTap: Bool) {
+        guard let toast = objc_getAssociatedObject(self, &activityToastViewKey) as? ActivityToastView else { return }
+        UIView.animate(withDuration: toast.configuration.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
+            toast.alpha = 0.0
+        }) { _ in
+            toast.removeFromSuperview()
+            objc_setAssociatedObject(self, &activityToastViewKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            toast.completion?(fromTap)
+        }
+    }
+    
+    func makeActivityToastView(configuration: ToastConfiguration, completion: ((Bool) -> Void)?) -> ActivityToastView {
         let style = configuration.style
         let toast = ActivityToastView(configuration: configuration)
+        toast.completion = completion
         toast.frame = CGRect(origin: .zero, size: style.activitySize)
         toast.backgroundColor = style.backgroundColor
         toast.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
@@ -364,6 +386,7 @@ private final class ToastView: UIView {
 
 private final class ActivityToastView: UIView {
     let configuration: ToastConfiguration
+    var completion: ((Bool) -> Void)?
     
     init(configuration: ToastConfiguration) {
         self.configuration = configuration

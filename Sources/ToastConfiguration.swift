@@ -105,7 +105,7 @@ public class ToastConfiguration {
     /// The visual style used to build toast views.
     public var style = ToastStyle()
     
-    /// A Boolean value that determines whether tapping a toast dismisses it. Default is `true`.
+    /// A Boolean value that determines whether tapping a toast or activity toast dismisses it. Default is `true`.
     public var isTapToDismissEnabled = true
     
     /// A Boolean value that determines whether toasts are shown one after another.
