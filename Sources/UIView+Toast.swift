@@ -26,8 +26,8 @@ public extension UIView {
     ///   - message: The text to display.
     ///   - image: An optional image shown above the message.
     ///   - configuration: Behavior and style settings. Uses ``ToastConfiguration/default`` when `nil`.
-    ///   - completion: Called after the toast disappears. The argument is `true` if the user tapped to dismiss.
-    func showToast(_ message: String?, image: UIImage? = nil, configuration: ToastConfiguration? = nil, completion: ((_ didTap: Bool) -> Void)? = nil) {
+    ///   - completion: Called after the toast disappears. `fromTap` is `true` if the user tapped to dismiss.
+    func showToast(_ message: String?, image: UIImage? = nil, configuration: ToastConfiguration? = nil, completion: ((_ fromTap: Bool) -> Void)? = nil) {
         let configuration = configuration ?? .default
         guard let toast = makeToastView(message: message, image: image, configuration: configuration, completion: completion) else { return }
         let point = configuration.position.centerPoint(for: toast, in: self, style: configuration.style)
@@ -44,8 +44,8 @@ public extension UIView {
     ///   - point: The center point of the toast in the receiver's coordinate space.
     ///   - image: An optional image shown above the message.
     ///   - configuration: Behavior and style settings. Uses ``ToastConfiguration/default`` when `nil`.
-    ///   - completion: Called after the toast disappears. The argument is `true` if the user tapped to dismiss.
-    func showToast(_ message: String?, at point: CGPoint, image: UIImage? = nil, configuration: ToastConfiguration? = nil, completion: ((_ didTap: Bool) -> Void)? = nil) {
+    ///   - completion: Called after the toast disappears. `fromTap` is `true` if the user tapped to dismiss.
+    func showToast(_ message: String?, at point: CGPoint, image: UIImage? = nil, configuration: ToastConfiguration? = nil, completion: ((_ fromTap: Bool) -> Void)? = nil) {
         let configuration = configuration ?? .default
         guard let toast = makeToastView(message: message, image: image, configuration: configuration, completion: completion) else { return }
         present(toast, at: point)
@@ -117,7 +117,7 @@ public extension UIView {
     /// Hides the visible activity toast, if there is one.
     func hideActivityToast() {
         guard let toast = objc_getAssociatedObject(self, &activityToastViewKey) as? ActivityToastView else { return }
-        UIView.animate(withDuration: toast.configuration.animationDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
+        UIView.animate(withDuration: toast.configuration.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
             toast.alpha = 0.0
         }) { _ in
             toast.removeFromSuperview()
@@ -177,11 +177,11 @@ private extension UIView {
         activeToasts.append(toast)
         addSubview(toast)
         
-        toast.timer = Timer(timeInterval: toast.configuration.duration, repeats: false) { [weak self] _ in
+        toast.timer = Timer(timeInterval: toast.configuration.visibleDuration, repeats: false) { [weak self] _ in
             self?.hide(toast)
         }
         
-        UIView.animate(withDuration: toast.configuration.animationDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: {
+        UIView.animate(withDuration: toast.configuration.fadeDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: {
             toast.alpha = 1.0
         }) { _ in
             guard let timer = toast.timer else { return }
@@ -197,7 +197,7 @@ private extension UIView {
         toast.timer?.invalidate()
         toast.timer = nil
         
-        UIView.animate(withDuration: toast.configuration.animationDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
+        UIView.animate(withDuration: toast.configuration.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
             toast.alpha = 0.0
         }) { _ in
             toast.removeFromSuperview()
@@ -226,7 +226,7 @@ private extension UIView {
         objc_setAssociatedObject(self, &activityToastViewKey, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         addSubview(toast)
         
-        UIView.animate(withDuration: toast.configuration.animationDuration, delay: 0.0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: toast.configuration.fadeDuration, delay: 0.0, options: .curveEaseOut, animations: {
             toast.alpha = 1.0
         })
     }

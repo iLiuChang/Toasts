@@ -103,7 +103,7 @@ view.showToast("Pinned here", at: CGPoint(x: view.bounds.midX, y: 180))
 
 ```swift
 let configuration = ToastConfiguration()
-configuration.duration = 2
+configuration.visibleDuration = 2
 configuration.style.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.92)
 configuration.style.messageColor = .white
 configuration.style.cornerRadius = 16
@@ -118,8 +118,8 @@ Change `ToastConfiguration.default` to apply the same behavior and style to ever
 ### Completion
 
 ```swift
-view.showToast("Tap to dismiss") { didTap in
-    print(didTap ? "Dismissed by tap" : "Timed out")
+view.showToast("Tap to dismiss") { fromTap in
+    print(fromTap ? "Dismissed by tap" : "Timed out")
 }
 ```
 
@@ -128,7 +128,7 @@ view.showToast("Tap to dismiss") { didTap in
 ```swift
 let configuration = ToastConfiguration()
 configuration.isQueueEnabled = true
-configuration.duration = 1.2
+configuration.visibleDuration = 1.2
 
 view.showToast("First", configuration: configuration)
 view.showToast("Second", configuration: configuration)
@@ -160,7 +160,7 @@ view.clearToastQueue()
 
 | Method / Property | Description |
 |---|---|
-| `showToast(_:image:configuration:completion:)` | Shows a toast. Position and duration come from `configuration`. |
+| `showToast(_:image:configuration:completion:)` | Shows a toast. Position and visible duration come from `configuration`. |
 | `showToast(_:at:image:configuration:completion:)` | Shows a toast at a specific center point. |
 | `hideToast()` | Hides the oldest visible toast. Does not hide the activity toast. |
 | `hideAllToasts(includeActivity:clearQueue:)` | Hides all visible toasts. Both flags default to `true`. |
@@ -178,8 +178,8 @@ view.clearToastQueue()
 | `style` | Visual style for toast and activity views. |
 | `isTapToDismissEnabled` | Whether tapping a toast dismisses it. Default is `true`. |
 | `isQueueEnabled` | Whether toasts wait in a queue. Default is `false`. Does not affect activity toasts. |
-| `duration` | Visible duration in seconds. Default is `3`. |
-| `animationDuration` | Fade in and fade out duration in seconds. Default is `0.2`. |
+| `visibleDuration` | Visible duration in seconds. Default is `3`. |
+| `fadeDuration` | Fade in and fade out duration in seconds. Default is `0.2`. |
 | `position` | `.top`, `.center`, or `.bottom`. Default is `.center`. |
 
 ### ToastStyle

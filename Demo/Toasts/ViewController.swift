@@ -55,7 +55,7 @@ final class ViewController: UIViewController {
         ExampleSection(title: "样式与行为", examples: [
             Example(title: "自定义样式") { [weak self] in
                 let configuration = ToastConfiguration()
-                configuration.duration = 2
+                configuration.visibleDuration = 2
                 configuration.style.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.92)
                 configuration.style.messageColor = .white
                 configuration.style.cornerRadius = 16
@@ -67,15 +67,15 @@ final class ViewController: UIViewController {
                 self?.view.showToast("这是一条比较长的提示，用来查看多行文本和最大宽度限制是否正常。")
             },
             Example(title: "点击关闭回调") { [weak self] in
-                self?.view.showToast("点我关闭") { didTap in
-                    let text = didTap ? "用户点击关闭" : "自动消失"
+                self?.view.showToast("点我关闭") { fromTap in
+                    let text = fromTap ? "用户点击关闭" : "自动消失"
                     self?.view.showToast(text)
                 }
             },
             Example(title: "队列弹出 3 条") { [weak self] in
                 let configuration = ToastConfiguration()
                 configuration.isQueueEnabled = true
-                configuration.duration = 1.2
+                configuration.visibleDuration = 1.2
                 self?.view.showToast("第一条", configuration: configuration)
                 self?.view.showToast("第二条", configuration: configuration)
                 self?.view.showToast("第三条", configuration: configuration)

@@ -115,10 +115,10 @@ public class ToastConfiguration {
     public var isQueueEnabled = false
     
     /// The visible duration of a toast, in seconds. Default is `3`.
-    public var duration: TimeInterval = 3.0
+    public var visibleDuration: TimeInterval = 3.0
     
-    /// The fade in and fade out animation duration, in seconds. Default is `0.2`.
-    public var animationDuration: TimeInterval = 0.2
+    /// The fade in and fade out duration, in seconds. Default is `0.2`.
+    public var fadeDuration: TimeInterval = 0.2
     
     /// The default toast position. Default is ``ToastPosition/center``.
     public var position: ToastPosition = .center
