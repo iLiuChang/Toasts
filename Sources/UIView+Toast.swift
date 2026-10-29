@@ -30,7 +30,7 @@ public extension UIView {
     func showToast(_ message: String?, image: UIImage? = nil, configuration: ToastConfiguration? = nil, completion: ((_ didTap: Bool) -> Void)? = nil) {
         let configuration = configuration ?? .default
         guard let toast = makeToastView(message: message, image: image, configuration: configuration, completion: completion) else { return }
-        let point = configuration.position.centerPoint(forToast: toast, inSuperview: self, configuration: configuration)
+        let point = configuration.position.centerPoint(for: toast, in: self, style: configuration.style)
         present(toast, at: point)
     }
     
@@ -96,7 +96,7 @@ public extension UIView {
     func showActivityToast(configuration: ToastConfiguration? = nil) {
         let configuration = configuration ?? .default
         let toast = makeActivityToastView(configuration: configuration)
-        let point = configuration.position.centerPoint(forToast: toast, inSuperview: self, configuration: configuration)
+        let point = configuration.position.centerPoint(for: toast, in: self, style: configuration.style)
         showActivityToast(toast, at: point)
     }
     
@@ -117,7 +117,7 @@ public extension UIView {
     /// Hides the visible activity toast, if there is one.
     func hideActivityToast() {
         guard let toast = objc_getAssociatedObject(self, &activityToastViewKey) as? ActivityToastView else { return }
-        UIView.animate(withDuration: toast.configuration.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
+        UIView.animate(withDuration: toast.configuration.animationDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
             toast.alpha = 0.0
         }) { _ in
             toast.removeFromSuperview()
@@ -181,7 +181,7 @@ private extension UIView {
             self?.hide(toast)
         }
         
-        UIView.animate(withDuration: toast.configuration.style.fadeDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: {
+        UIView.animate(withDuration: toast.configuration.animationDuration, delay: 0.0, options: [.curveEaseOut, .allowUserInteraction], animations: {
             toast.alpha = 1.0
         }) { _ in
             guard let timer = toast.timer else { return }
@@ -197,7 +197,7 @@ private extension UIView {
         toast.timer?.invalidate()
         toast.timer = nil
         
-        UIView.animate(withDuration: toast.configuration.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
+        UIView.animate(withDuration: toast.configuration.animationDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
             toast.alpha = 0.0
         }) { _ in
             toast.removeFromSuperview()
@@ -226,7 +226,7 @@ private extension UIView {
         objc_setAssociatedObject(self, &activityToastViewKey, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         addSubview(toast)
         
-        UIView.animate(withDuration: toast.configuration.style.fadeDuration, delay: 0.0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: toast.configuration.animationDuration, delay: 0.0, options: .curveEaseOut, animations: {
             toast.alpha = 1.0
         })
     }
@@ -235,7 +235,7 @@ private extension UIView {
         let style = configuration.style
         let toast = ActivityToastView(configuration: configuration)
         toast.frame = CGRect(origin: .zero, size: style.activitySize)
-        toast.backgroundColor = style.activityBackgroundColor
+        toast.backgroundColor = style.backgroundColor
         toast.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
         toast.layer.cornerRadius = style.cornerRadius
         toast.applyShadow(style.shadow)
@@ -294,7 +294,7 @@ private extension UIView {
             let maxMessageWidth = (bounds.width * maxWidthRatio) - style.contentInsets.left - style.contentInsets.right
             var maxMessageHeight = bounds.height * maxHeightRatio
             if imageRect.height > 0 {
-                maxMessageHeight -= imageRect.height + style.contentInsets.top
+                maxMessageHeight -= imageRect.height + style.spacing
             }
             let maxSize = CGSize(width: max(maxMessageWidth, 0), height: max(maxMessageHeight, 0))
             let fittedSize = label.sizeThatFits(maxSize)
@@ -313,7 +313,7 @@ private extension UIView {
         if messageLabel != nil {
             messageRect.origin.x = style.contentInsets.left
             messageRect.size.width = wrapperWidth - style.contentInsets.left - style.contentInsets.right
-            messageRect.origin.y = imageView != nil ? imageRect.maxY + style.contentInsets.top : style.contentInsets.top
+            messageRect.origin.y = imageView != nil ? imageRect.maxY + style.spacing : style.contentInsets.top
         }
         
         let contentMaxY = messageRect.height > 0 ? messageRect.maxY : imageRect.maxY

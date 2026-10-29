@@ -179,7 +179,8 @@ view.clearToastQueue()
 | `isTapToDismissEnabled` | Whether tapping a toast dismisses it. Default is `true`. |
 | `isQueueEnabled` | Whether toasts wait in a queue. Default is `false`. Does not affect activity toasts. |
 | `duration` | Visible duration in seconds. Default is `3`. |
-| `position` | `.top`, `.center`, or `.bottom`. Default is `.bottom`. |
+| `animationDuration` | Fade in and fade out duration in seconds. Default is `0.2`. |
+| `position` | `.top`, `.center`, or `.bottom`. Default is `.center`. |
 
 ### ToastStyle
 
@@ -193,13 +194,12 @@ view.clearToastQueue()
 | `maxWidthRatio` | Maximum width as a fraction of the superview, in `0...1`. Default is `0.8`. |
 | `maxHeightRatio` | Maximum height as a fraction of the superview, in `0...1`. Default is `0.8`. |
 | `contentInsets` | Insets from the toast edges to its content. Default is `10` on all sides. |
+| `spacing` | Spacing between the image and the message. Default is `10`. |
 | `cornerRadius` | Corner radius. Default is `10`. |
 | `shadow` | Optional `ToastShadow`. `nil` means no shadow. |
 | `imageSize` | Image size. Default is `80 × 80`. |
 | `activitySize` | Activity toast size. Default is `100 × 100`. |
-| `fadeDuration` | Fade in and fade out duration. Default is `0.2`. |
 | `activityIndicatorColor` | Activity indicator color. Default is white. |
-| `activityBackgroundColor` | Activity toast background. Default is black at 80% opacity. |
 
 ### ToastShadow
 

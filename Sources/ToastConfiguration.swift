@@ -47,9 +47,6 @@ public struct ToastStyle {
     /// The background color. Default is black at 80% opacity.
     public var backgroundColor: UIColor = UIColor.black.withAlphaComponent(0.8)
     
-    /// The message text color. Default is white.
-    public var messageColor: UIColor = .white
-    
     /// The maximum width of the toast as a fraction of its superview, in the range `0...1`. Default is `0.8`.
     public var maxWidthRatio: CGFloat = 0.8
     
@@ -58,13 +55,18 @@ public struct ToastStyle {
     
     /// Insets from the toast edges to its content. Default is `10` on all sides.
     ///
-    /// `top` is also used as the spacing between the image and the message.
     /// When positioning the toast, `top` and `bottom` are added to the superview's safe area insets.
     public var contentInsets: UIEdgeInsets = UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)
+    
+    /// The spacing between the image and the message. Default is `10`.
+    public var spacing: CGFloat = 10.0
     
     /// The corner radius. Default is `10`.
     public var cornerRadius: CGFloat = 10.0
     
+    /// The message text color. Default is white.
+    public var messageColor: UIColor = .white
+
     /// The message font. Default is the system font at size `16`.
     public var messageFont: UIFont = .systemFont(ofSize: 16.0)
     
@@ -83,14 +85,8 @@ public struct ToastStyle {
     /// The activity toast size. Default is `100 × 100`.
     public var activitySize = CGSize(width: 100.0, height: 100.0)
     
-    /// The fade in and fade out duration. Default is `0.2` seconds.
-    public var fadeDuration: TimeInterval = 0.2
-    
     /// The activity indicator color. Default is white.
     public var activityIndicatorColor: UIColor = .white
-    
-    /// The activity toast background color. Default is black at 80% opacity.
-    public var activityBackgroundColor: UIColor = UIColor.black.withAlphaComponent(0.8)
     
 }
 
@@ -121,8 +117,11 @@ public class ToastConfiguration {
     /// The visible duration of a toast, in seconds. Default is `3`.
     public var duration: TimeInterval = 3.0
     
-    /// The default toast position. Default is ``ToastPosition/bottom``.
-    public var position: ToastPosition = .bottom
+    /// The fade in and fade out animation duration, in seconds. Default is `0.2`.
+    public var animationDuration: TimeInterval = 0.2
+    
+    /// The default toast position. Default is ``ToastPosition/center``.
+    public var position: ToastPosition = .center
     
 }
 
@@ -137,17 +136,19 @@ public enum ToastPosition {
     /// Near the bottom of the superview, including the bottom safe area inset.
     case bottom
     
-    func centerPoint(forToast toast: UIView, inSuperview superview: UIView, configuration: ToastConfiguration) -> CGPoint {
-        let topPadding = configuration.style.contentInsets.top + superview.safeAreaInsets.top
-        let bottomPadding = configuration.style.contentInsets.bottom + superview.safeAreaInsets.bottom
+    func centerPoint(for toast: UIView, in superview: UIView, style: ToastStyle) -> CGPoint {
+        let bounds = superview.bounds
+        let midX = bounds.midX
         
         switch self {
         case .top:
-            return CGPoint(x: superview.bounds.size.width / 2.0, y: (toast.frame.size.height / 2.0) + topPadding)
+            let padding = style.contentInsets.top + superview.safeAreaInsets.top
+            return CGPoint(x: midX, y: toast.bounds.midY + padding)
         case .center:
-            return CGPoint(x: superview.bounds.size.width / 2.0, y: superview.bounds.size.height / 2.0)
+            return CGPoint(x: midX, y: bounds.midY)
         case .bottom:
-            return CGPoint(x: superview.bounds.size.width / 2.0, y: (superview.bounds.size.height - (toast.frame.size.height / 2.0)) - bottomPadding)
+            let padding = style.contentInsets.bottom + superview.safeAreaInsets.bottom
+            return CGPoint(x: midX, y: bounds.maxY - toast.bounds.midY - padding)
         }
     }
 }
